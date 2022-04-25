@@ -2,6 +2,7 @@ import pygame
 
 import ctypes
 
+from adrianoid.background import Background
 from adrianoid.balls import Balls
 from adrianoid.fps_counter import FPSCounter
 from adrianoid.paddle import Paddle
@@ -26,6 +27,7 @@ class Adrianoid:
         self.my_font = pygame.font.SysFont('Comic Sans MS', 130)
         self.fps = FPSCounter()
         self.balls = Balls(self.weight, self.height)
+        self.background=Background()
 
     def on_init(self):
         pygame.init()
@@ -58,11 +60,13 @@ class Adrianoid:
 
     def on_render(self):
         self._display_surf.fill((50, 50, 100))
-        self._display_surf.blit(self.paddle.image, (self.paddle.absolute_x, self.paddle.absolute_y))
+        self._display_surf.blit(self.background.background0, (0,0))
+        self._display_surf.blit(self.paddle.image, (self.paddle.x, self.paddle.y))
         for i in self.balls.balls:
-            self._display_surf.blit(i.image, (i.absolute_x, i.absolute_y))
+            self._display_surf.blit(i.image, (i.x, i.y))
         self.render_fps()
         pygame.display.flip()
+
 
     def on_cleanup(self):
         pygame.quit()

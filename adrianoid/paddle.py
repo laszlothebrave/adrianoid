@@ -19,7 +19,7 @@ class Paddle:
         self.base_length = 15
         self.length_multiplayer = 1
         self.base_speed = 10
-        self.speed_multiplayer = 1
+        self.speed_multiplayer = 3
         self.height = 5 * self.screen_height / 100
         self.width = self.base_length * self.length_multiplayer * self.screen_width / 100
         self.image = pygame.Surface((int(self.width), int(self.height)))

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pygame
 
 
@@ -16,6 +18,9 @@ class Ball:
         self.absolute_radius = self.radius * self.screen_height / 100
         self.image = pygame.Surface((int(2*self.absolute_radius), int(2*self.absolute_radius)))
         self.image.fill((255, 0, 255))
+        img=pygame.image.load(Path("grafiks","ball.png"))
+        img= pygame.transform.scale(img, (40, 40))
+        self.image.blit(img,(0,0))
         self.absolute_x = self.x * self.screen_width / 100 - self.absolute_radius
         self.absolute_y = self.y * self.screen_height / 100 - self.absolute_radius
         self.dir_x = 1

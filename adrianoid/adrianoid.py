@@ -32,8 +32,8 @@ class Adrianoid:
         infoObject = pygame.display.Info()
         self.weight = infoObject.current_w
         self.height = infoObject.current_h
-        self.weight = 1920//2
-        self.height = 1080//3
+        self.weight = 1920
+        self.height = 1080
         self._display_surf = pygame.display.set_mode((self.weight, self.height), pygame.SRCALPHA | pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.SCALED)
         # self._display_surf = pygame.display.set_mode((self.weight, self.height), pygame.SRCALPHA | pygame.DOUBLEBUF)
 

@@ -60,6 +60,10 @@ class Adrianoid:
             self.paddle.move_right(self.delta_t, self.game_speed)
         if self.keys_pressed[pygame.K_ESCAPE]:
             self._running = False
+        for ball in self.balls.balls:
+            for brick in self.bricks:
+                ball.bounce_brick(brick)
+
 
     def on_render(self):
         self._display_surf.fill((50, 50, 100))

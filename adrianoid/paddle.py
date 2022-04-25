@@ -22,7 +22,7 @@ class Paddle:
         self.speed_multiplayer = 40
         self.height = 2 * self.screen_height / 100
         self.width = self.length * self.screen_width / 100
-        self.x = 50/100*self.screen_width-300
+        self.x = 50/100*(self.screen_width-300) - self.width/2
         self.y = 90/100*self.screen_height
         self.image = pygame.Surface((int(self.width), int(self.height)),pygame.SRCALPHA, 32)
         img = pygame.image.load(Path("grafiks", "317-Breakout-Tiles.png"))

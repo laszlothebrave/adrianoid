@@ -11,13 +11,13 @@ class Ball:
         self.screen_height = screen_height
         self.radius = 20
         self.speed= 350
-        self.x = self.screen_width/2-self.radius
+        self.x = (self.screen_width-300)/2-self.radius
         self.y = self.screen_height/2-self.radius
         self.image = pygame.Surface((int(2*self.radius), int(2*self.radius)),pygame.SRCALPHA, 32)
         img=pygame.image.load(Path("grafiks","337-Breakout-Tiles.png"))
         img= pygame.transform.scale(img, (self.radius*2, self.radius*2))
         self.image.blit(img,(0,0))
-        self.dir_x = 0.05
+        self.dir_x = 0
         self.dir_y = 1
         self.border_width=58
         self.border_width_top = 37
@@ -46,9 +46,7 @@ class Ball:
 
     def bounce_paddle(self, paddle):
         if self.y + 2*self.radius> paddle.y and self.y + self.radius< paddle.y-paddle.height/2:
-
             print(self.x, self.radius, paddle.x, paddle.length)
             if self.x+self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
-                print('paddle')
                 self.dir_y = -abs(self.dir_y)
 

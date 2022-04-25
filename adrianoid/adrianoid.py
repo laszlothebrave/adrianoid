@@ -4,6 +4,7 @@ import ctypes
 
 from adrianoid.background import Background
 from adrianoid.balls import Balls
+from adrianoid.brick import Brick
 from adrianoid.fps_counter import FPSCounter
 from adrianoid.paddle import Paddle
 
@@ -28,6 +29,7 @@ class Adrianoid:
         self.fps = FPSCounter()
         self.balls = Balls(self.weight, self.height)
         self.background=Background()
+        self.bricks = [Brick(self.weight, self.height)]
 
     def on_init(self):
         pygame.init()
@@ -65,6 +67,8 @@ class Adrianoid:
         self._display_surf.blit(self.paddle.image, (self.paddle.x, self.paddle.y))
         for i in self.balls.balls:
             self._display_surf.blit(i.image, (i.x, i.y))
+        for brick in self.bricks:
+            self._display_surf.blit(brick.image, (brick.x, brick.y))
         self.render_fps()
         pygame.display.flip()
 

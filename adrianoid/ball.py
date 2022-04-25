@@ -47,6 +47,17 @@ class Ball:
     def bounce_paddle(self, paddle):
         if self.y + 2*self.radius> paddle.y and self.y + self.radius< paddle.y-paddle.height/2:
             print(self.x, self.radius, paddle.x, paddle.length)
-            if self.x+self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
+            if self.x+self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width/3:
                 self.dir_y = -abs(self.dir_y)
+                self.dir_x = self.dir_x - 0.5
+            if self.x+self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
+               self.dir_y = -abs(self.dir_y)
+            if self.x + self.radius > paddle.x and self.x + self.radius > paddle.x + 2/3*paddle.width:
+                self.dir_y = -abs(self.dir_y)
+                self.dir_x = self.dir_x + 0.5
+
+
+
+
+
 

@@ -51,6 +51,7 @@ class Adrianoid:
     def on_loop(self):
         for i in self.balls.balls:
             i.move(self.delta_t, self.game_speed)
+            i.bounce_paddle(self.paddle)
         if self.keys_pressed[pygame.K_a]:
             self.paddle.move_left(self.delta_t, self.game_speed)
         if self.keys_pressed[pygame.K_d]:

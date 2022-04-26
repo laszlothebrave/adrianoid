@@ -1,3 +1,4 @@
+import cmath
 import math
 from pathlib import Path
 
@@ -58,6 +59,19 @@ class Ball:
                 r = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
                 self.dir_y = self.dir_y / r*v
                 self.dir_x = self.dir_x / r*v
+                self.hit_paddle_sound.play()
+
+    def bounce_paddle_polar(self, paddle):
+        if self.y + 2 * self.radius > paddle.y and self.y + self.radius < paddle.y - paddle.height / 2:
+            if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
+                v= math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                fi=self.get_polar(self.dir_x, self.dir_y)
+                # v, fi = cmath.polar(complex(self.x, self.y))
+                # print (fi, v)
+                fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * -math.pi/4
+                new_fi = -fi + fi_delta
+                self.dir_y = v * math.sin(new_fi)
+                self.dir_x = v * math.cos(new_fi)
                 self.hit_paddle_sound.play()
 
     def bounce_brick(self, brick):

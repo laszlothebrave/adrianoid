@@ -33,7 +33,6 @@ class Adrianoid:
         self.background = Background()
         self.bricks = []
         for x in range(-7, 8, 1):
-            print(x)
             for y in range(8):
                 self.bricks.append(Brick(self.weight, self.height, -x, y))
 
@@ -62,7 +61,7 @@ class Adrianoid:
     def on_loop(self):
         for i in self.balls.balls:
             i.move(self.delta_t, self.game_speed)
-            i.bounce_paddle(self.paddle)
+            i.bounce_paddle_polar(self.paddle)
         for i in self.bonuses:
             i.move(self.delta_t, self.game_speed)
         if self.keys_pressed[pygame.K_a]:

@@ -12,7 +12,7 @@ class Ball:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.radius = 20
-        self.speed = 350
+        self.speed = 500
         self.x = (self.screen_width - 300) / 2 - self.radius
         self.y = self.screen_height / 3 * 2 - self.radius
         # self.x = 900
@@ -21,8 +21,8 @@ class Ball:
         img = pygame.image.load(Path("grafiks", "337-Breakout-Tiles.png"))
         img = pygame.transform.scale(img, (self.radius * 2, self.radius * 2))
         self.image.blit(img, (0, 0))
-        self.dir_x = 2
-        self.dir_y = 0.1
+        self.dir_x = 0
+        self.dir_y = 1
         self.border_width = 58
         self.border_width_top = 37
         self.hit_brick_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (6).wav')))
@@ -47,12 +47,12 @@ class Ball:
             self.dir_y = abs(self.dir_y)
         if self.y >= self.screen_height - 2 * self.radius:
             self.dir_y = -abs(self.dir_y)
-            self.dir_x = 0
-            self.dir_y = 0
+            # self.dir_x = 0
+            # self.dir_y = 0
             self.hit_bottom_sound.play()
 
     def bounce_paddle(self, paddle):
-        if self.y + 2 * self.radius > paddle.y and self.y + self.radius < paddle.y - paddle.height / 2:
+        if self.y + 2 * self.radius <= paddle.y and self.y + 2 * self.radius + 3*self.y_delta >= paddle.y:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
                 v= math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
                 self.dir_x += (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * -1
@@ -63,16 +63,21 @@ class Ball:
                 self.hit_paddle_sound.play()
 
     def bounce_paddle_polar(self, paddle):
-        if self.y + 2 * self.radius > paddle.y and self.y + self.radius < paddle.y - paddle.height / 2:
+        if self.y + 2 * self.radius < paddle.y and  self.y + 2 * self.radius + 2*self.y_delta >= paddle.y:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
+
                 v= math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
                 fi=self.get_polar(self.dir_x, self.dir_y)
+                # if fi > 2*math.pi:
+                #     fi = fi - 2* math.pi
                 # v, fi = cmath.polar(complex(self.x, self.y))
                 # print (fi, v)
                 fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * math.pi/6
                 new_fi = -(fi + fi_delta)
-                print(new_fi)
 
+                print(new_fi, fi_delta)
+                # new_fi = max(new_fi, math.pi * -3 / 4)
+                # new_fi = min(new_fi, math.pi * -1 / 4)
                 new_fi = max(new_fi, math.pi * -11/12)
                 new_fi = min(new_fi, math.pi * -1/12)
                 self.dir_y = v * math.sin(new_fi)

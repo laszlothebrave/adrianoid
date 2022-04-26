@@ -21,7 +21,7 @@ class Paddle:
         self.screen_height = screen_height
         self.length = 15
         self.base_speed = 10
-        self.speed_multiplayer = 40
+        self.speed_multiplayer = 100
         self.height = 2 * self.screen_height / 100
         self.width = self.length * self.screen_width / 100
         self.x = 50 / 100 * (self.screen_width - 300) - self.width / 2

@@ -14,6 +14,7 @@ ctypes.windll.user32.SetProcessDPIAware()
 
 class Adrianoid:
     def __init__(self):
+        self.time = None
         self.fps_cur = None
         self.fps = None
         self.keys_pressed = None
@@ -92,7 +93,8 @@ class Adrianoid:
         for brick in self.bricks:
             self._display_surf.blit(brick.image, (brick.x, brick.y))
         for bonus in self.bonuses:
-            self._display_surf.blit(bonus.image, (bonus.x, bonus.y))
+            self._display_surf.blit(bonus.image[bonus.image_counter], (bonus.x, bonus.y))
+            bonus.update_image_counter(self.time)
         self.render_fps()
         pygame.display.flip()
 
@@ -103,6 +105,7 @@ class Adrianoid:
         clock = pygame.time.Clock()
         while self._running:
             clock.tick()
+            self.time = pygame.time.get_ticks()
             self.delta_t = clock.get_time() / 1000
             self.fps_cur = clock.get_fps()
             self.fps.add_measurement(clock.get_fps())

@@ -68,7 +68,7 @@ class Ball:
                 fi=self.get_polar(self.dir_x, self.dir_y)
                 # v, fi = cmath.polar(complex(self.x, self.y))
                 # print (fi, v)
-                fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * -math.pi/4
+                fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * -math.pi/6
                 new_fi = -fi + fi_delta
                 self.dir_y = v * math.sin(new_fi)
                 self.dir_x = v * math.cos(new_fi)

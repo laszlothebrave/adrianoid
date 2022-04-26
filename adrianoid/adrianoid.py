@@ -29,7 +29,12 @@ class Adrianoid:
         self.fps = FPSCounter()
         self.balls = Balls(self.weight, self.height)
         self.background=Background()
-        self.bricks = [Brick(self.weight, self.height)]
+        self.bricks = []
+        for x in range(-7, 8, 1):
+            print(x)
+            for y in range(8):
+                self.bricks.append(Brick(self.weight, self.height, -x, y))
+
 
     def on_init(self):
         pygame.init()
@@ -62,7 +67,8 @@ class Adrianoid:
             self._running = False
         for ball in self.balls.balls:
             for brick in self.bricks:
-                ball.bounce_brick(brick)
+                if ball.bounce_brick(brick):
+                    self.bricks.remove(brick)
 
 
     def on_render(self):

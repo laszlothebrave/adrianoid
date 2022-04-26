@@ -4,11 +4,13 @@ import ctypes
 
 from adrianoid.background import Background
 from adrianoid.balls import Balls
-from adrianoid.brick import Brick
+from adrianoid.bonus.bonus import Bonus
+from adrianoid.brick.brick import Brick
 from adrianoid.fps_counter import FPSCounter
 from adrianoid.paddle import Paddle
 
 ctypes.windll.user32.SetProcessDPIAware()
+
 
 class Adrianoid:
     def __init__(self):
@@ -28,13 +30,14 @@ class Adrianoid:
         self.my_font = pygame.font.SysFont('Comic Sans MS', 130)
         self.fps = FPSCounter()
         self.balls = Balls(self.weight, self.height)
-        self.background=Background()
+        self.background = Background()
         self.bricks = []
         for x in range(-7, 8, 1):
             print(x)
             for y in range(8):
                 self.bricks.append(Brick(self.weight, self.height, -x, y))
 
+        self.bonuses = []
 
     def on_init(self):
         pygame.init()
@@ -43,7 +46,8 @@ class Adrianoid:
         self.height = infoObject.current_h
         self.weight = 1920
         self.height = 1080
-        self._display_surf = pygame.display.set_mode((self.weight, self.height), pygame.SRCALPHA | pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.SCALED)
+        self._display_surf = pygame.display.set_mode((self.weight, self.height),
+                                                     pygame.SRCALPHA | pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.SCALED)
         # self._display_surf = pygame.display.set_mode((self.weight, self.height), pygame.SRCALPHA | pygame.DOUBLEBUF)
 
         self.keys_pressed = pygame.key.get_pressed()
@@ -59,6 +63,8 @@ class Adrianoid:
         for i in self.balls.balls:
             i.move(self.delta_t, self.game_speed)
             i.bounce_paddle(self.paddle)
+        for i in self.bonuses:
+            i.move(self.delta_t, self.game_speed)
         if self.keys_pressed[pygame.K_a]:
             self.paddle.move_left(self.delta_t, self.game_speed)
         if self.keys_pressed[pygame.K_d]:
@@ -68,20 +74,23 @@ class Adrianoid:
         for ball in self.balls.balls:
             for brick in self.bricks:
                 if ball.bounce_brick(brick):
+                    self.bonuses.append(Bonus(self.weight, self.height, brick.x, brick.y))
                     self.bricks.remove(brick)
-
+            for bonus in self.bonuses:
+                ball.bounce_bonus(bonus)
 
     def on_render(self):
         self._display_surf.fill((50, 50, 100))
-        self._display_surf.blit(self.background.background0, (0,0))
+        self._display_surf.blit(self.background.background0, (0, 0))
         self._display_surf.blit(self.paddle.image, (self.paddle.x, self.paddle.y))
         for i in self.balls.balls:
             self._display_surf.blit(i.image, (i.x, i.y))
         for brick in self.bricks:
             self._display_surf.blit(brick.image, (brick.x, brick.y))
+        for bonus in self.bonuses:
+            self._display_surf.blit(bonus.image, (bonus.x, bonus.y))
         self.render_fps()
         pygame.display.flip()
-
 
     def on_cleanup(self):
         pygame.quit()
@@ -93,7 +102,7 @@ class Adrianoid:
         clock = pygame.time.Clock()
         while self._running:
             clock.tick()
-            self.delta_t = clock.get_time()/1000
+            self.delta_t = clock.get_time() / 1000
             self.fps_cur = clock.get_fps()
             self.fps.add_measurement(clock.get_fps())
             for event in pygame.event.get():

@@ -78,3 +78,22 @@ class Ball:
             self.hit_brick_sound.play()
             return True
         return False
+
+    def bounce_bonus(self, brick):
+        if brick.x + brick.width > self.x + self.radius > brick.x and \
+                brick.y > self.y + self.radius > brick.y - self.radius:
+            self.hit_brick_sound.play()
+            return True
+        if brick.x + brick.width > self.x + self.radius > brick.x and \
+                brick.y + brick.height < self.y + self.radius < brick.y + brick.height + self.radius:
+            self.hit_brick_sound.play()
+            return True
+        if brick.x > self.x + self.radius > brick.x - self.radius and \
+                brick.y + brick.height > self.y + self.radius > brick.y:
+            self.hit_brick_sound.play()
+            return True
+        if brick.x + brick.width + self.radius > self.x + self.radius > brick.x + brick.width and \
+                brick.y + brick.height > self.y + self.radius > brick.y:
+            self.hit_brick_sound.play()
+            return True
+        return False

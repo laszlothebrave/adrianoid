@@ -22,3 +22,6 @@ class Bonus:
     def move(self, delta_t, game_speed):
         self.y_delta = delta_t * game_speed * self.speed
         self.y += self.y_delta
+
+    def catch(self, paddle):
+        pass

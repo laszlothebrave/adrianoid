@@ -39,7 +39,11 @@ class Adrianoid:
         self.bonuses = []
 
     def on_init(self):
+        pygame.mixer.pre_init()
+        pygame.mixer.init()
         pygame.init()
+        pygame.mixer.set_num_channels(16)
+        print(pygame.mixer.get_num_channels())
         infoObject = pygame.display.Info()
         self.weight = infoObject.current_w
         self.height = infoObject.current_h
@@ -75,8 +79,9 @@ class Adrianoid:
                 if ball.bounce_brick(brick):
                     self.bonuses.append(Bonus(self.weight, self.height, brick.x, brick.y))
                     self.bricks.remove(brick)
-            for bonus in self.bonuses:
-                ball.bounce_bonus(bonus)
+        for bonus in self.bonuses:
+            if self.paddle.catch_bonus(bonus):
+                self.bonuses.remove(bonus)
 
     def on_render(self):
         self._display_surf.fill((50, 50, 100))
@@ -95,9 +100,6 @@ class Adrianoid:
         pygame.quit()
 
     def on_execute(self):
-        if self.on_init():
-            self._running = False
-
         clock = pygame.time.Clock()
         while self._running:
             clock.tick()

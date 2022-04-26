@@ -23,6 +23,10 @@ class Ball:
         self.dir_y = -1
         self.border_width = 58
         self.border_width_top = 37
+        self.hit_brick_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (6).wav')))
+        self.hit_paddle_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (7).wav')))
+        self.hit_bottom_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (10).wav')))
+
 
     def move(self, delta_t, game_speed):
         self.bounce_of_walls()
@@ -41,31 +45,36 @@ class Ball:
             self.dir_y = abs(self.dir_y)
         if self.y >= self.screen_height - 2 * self.radius:
             self.dir_y = -abs(self.dir_y)
-            self.dir_x = 0
-            self.dir_y = 0
+            # self.dir_x = 0
+            # self.dir_y = 0
+            self.hit_bottom_sound.play()
 
     def bounce_paddle(self, paddle):
         if self.y + 2 * self.radius > paddle.y and self.y + self.radius < paddle.y - paddle.height / 2:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
                 self.dir_x += (paddle.x + paddle.width/2 - (self.x + self.radius)) / (paddle.width/2) * -1
                 self.dir_y = -abs(self.dir_y)
-
+                self.hit_paddle_sound.play()
 
     def bounce_brick(self, brick):
         if brick.x + brick.width > self.x + self.radius > brick.x and \
                 brick.y > self.y + self.radius > brick.y - self.radius:
             self.dir_y = -abs(self.dir_y)
+            self.hit_brick_sound.play()
             return True
         if brick.x + brick.width > self.x + self.radius > brick.x and \
                 brick.y + brick.height < self.y + self.radius < brick.y + brick.height + self.radius:
             self.dir_y = abs(self.dir_y)
+            self.hit_brick_sound.play()
             return True
         if brick.x > self.x + self.radius > brick.x - self.radius and \
                 brick.y + brick.height > self.y + self.radius > brick.y:
             self.dir_x = -abs(self.dir_x)
+            self.hit_brick_sound.play()
             return True
         if brick.x + brick.width + self.radius > self.x + self.radius > brick.x + brick.width and \
                 brick.y + brick.height > self.y + self.radius > brick.y:
             self.dir_x = abs(self.dir_x)
+            self.hit_brick_sound.play()
             return True
         return False

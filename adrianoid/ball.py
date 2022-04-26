@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 
 import pygame
@@ -12,7 +13,7 @@ class Ball:
         self.radius = 20
         self.speed = 350
         self.x = (self.screen_width - 300) / 2 - self.radius
-        self.y = self.screen_height / 3*2 - self.radius
+        self.y = self.screen_height / 3 * 2 - self.radius
         # self.x = 900
         # self.y=420
         self.image = pygame.Surface((int(2 * self.radius), int(2 * self.radius)), pygame.SRCALPHA, 32)
@@ -26,7 +27,6 @@ class Ball:
         self.hit_brick_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (6).wav')))
         self.hit_paddle_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (7).wav')))
         self.hit_bottom_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (10).wav')))
-
 
     def move(self, delta_t, game_speed):
         self.bounce_of_walls()
@@ -52,8 +52,12 @@ class Ball:
     def bounce_paddle(self, paddle):
         if self.y + 2 * self.radius > paddle.y and self.y + self.radius < paddle.y - paddle.height / 2:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
-                self.dir_x += (paddle.x + paddle.width/2 - (self.x + self.radius)) / (paddle.width/2) * -1
+                v= math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                self.dir_x += (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * -1
                 self.dir_y = -abs(self.dir_y)
+                r = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                self.dir_y = self.dir_y / r*v
+                self.dir_x = self.dir_x / r*v
                 self.hit_paddle_sound.play()
 
     def bounce_brick(self, brick):
@@ -97,3 +101,15 @@ class Ball:
             self.hit_brick_sound.play()
             return True
         return False
+
+    def get_polar(self, x, y):
+        if x == 0 and y > 0:
+            return math.pi / 2
+        if x == 0 and y < 0:
+            return 3 / 2 * math.pi
+        if x > 0 and y >= 0:
+            return math.atan(y / x)
+        if x > 0 and y < 0:
+            return math.atan(y / x) + 2 * math.pi
+        if x < 0:
+            return math.atan(y / x) + math.pi

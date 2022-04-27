@@ -38,13 +38,13 @@ class Adrianoid:
                 self.bricks.append(Brick(self.weight, self.height, -x, y))
 
         self.bonuses = []
+        self.coor = [0, 0, 0, 0]
 
     def on_init(self):
         pygame.mixer.pre_init()
-        pygame.mixer.init()
+        pygame.mixer.init(48000, -16, 8, 4098)
         pygame.init()
         pygame.mixer.set_num_channels(16)
-        print(pygame.mixer.get_num_channels())
         infoObject = pygame.display.Info()
         self.weight = infoObject.current_w
         self.height = infoObject.current_h
@@ -64,9 +64,13 @@ class Adrianoid:
             self.keys_pressed = pygame.key.get_pressed()
 
     def on_loop(self):
+        if self.keys_pressed[pygame.K_s]:
+            self.paddle.lock_ball = True
+        else:
+            self.paddle.lock_ball = False
+
         for i in self.balls.balls:
-            i.move(self.delta_t, self.game_speed)
-            i.bounce_paddle_polar(self.paddle)
+            i.move(self.delta_t, self.game_speed, self.paddle, self.coor)
         for i in self.bonuses:
             i.move(self.delta_t, self.game_speed)
         if self.keys_pressed[pygame.K_a]:
@@ -88,6 +92,7 @@ class Adrianoid:
         self._display_surf.fill((50, 50, 100))
         self._display_surf.blit(self.background.background0, (0, 0))
         self._display_surf.blit(self.paddle.image, (self.paddle.x, self.paddle.y))
+        pygame.draw.line(self._display_surf, (120, 120, 120), (self.coor[0], self.coor[1]), (self.coor[2], self.coor[3]), 5)
         for i in self.balls.balls:
             self._display_surf.blit(i.image, (i.x, i.y))
         for brick in self.bricks:

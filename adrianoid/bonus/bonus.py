@@ -29,7 +29,6 @@ class Bonus:
         self.y += self.y_delta
 
     def update_image_counter(self, time):
-        print(time)
         if time - self.last_image_update > 600:
             self.last_image_update = time
             self.image_counter = (self.image_counter + 1)% 7

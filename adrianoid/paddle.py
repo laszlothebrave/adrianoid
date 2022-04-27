@@ -32,6 +32,7 @@ class Paddle:
         self.image.blit(img, (0, 0))
         self.frame_width = 58
         self.catch_bonus_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (9).wav')))
+        self.lock_ball = False
 
     def move_right(self, delta_t, game_speed):
         if self.x < self.screen_width - 300 - self.width - self.frame_width:

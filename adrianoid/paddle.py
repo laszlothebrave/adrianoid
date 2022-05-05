@@ -48,3 +48,11 @@ class Paddle:
             self.catch_bonus_sound.play()
             return True
         return False
+
+    def change_width(self, length_dif):
+        self.length = self.length + length_dif
+        self.width = self.length * self.screen_width / 100
+        self.image = pygame.Surface((int(self.width), int(self.height)), pygame.SRCALPHA, 32)
+        img = pygame.image.load(Path("grafiks", "317-Breakout-Tiles.png"))
+        img = pygame.transform.scale(img, (self.width, self.height))
+        self.image.blit(img, (0, 0))

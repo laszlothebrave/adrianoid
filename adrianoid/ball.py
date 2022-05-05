@@ -64,37 +64,56 @@ class Ball:
             self.hit_bottom_sound.play()
 
     def bounce_paddle(self, paddle):
-        if self.y + 2 * self.radius <= paddle.y and self.y + 2 * self.radius + 3*self.y_delta >= paddle.y:
+        if self.y + 2 * self.radius <= paddle.y and self.y + 2 * self.radius + 3 * self.y_delta >= paddle.y:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
-                v= math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
                 self.dir_x += (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * -1
                 self.dir_y = -abs(self.dir_y)
                 r = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
-                self.dir_y = self.dir_y / r*v
-                self.dir_x = self.dir_x / r*v
+                self.dir_y = self.dir_y / r * v
+                self.dir_x = self.dir_x / r * v
                 self.hit_paddle_sound.play()
 
     def bounce_paddle_polar(self, paddle):
-        if self.y + 2 * self.radius < paddle.y and  self.y + 2 * self.radius + 2*self.y_delta >= paddle.y:
+        if self.y + 2 * self.radius < paddle.y and self.y + 2 * self.radius + 2 * self.y_delta >= paddle.y:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
-
-                v= math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.1
-                fi=self.get_polar(self.dir_x, self.dir_y)
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.1
+                fi = self.get_polar(self.dir_x, self.dir_y)
                 # if fi > 2*math.pi:
                 #     fi = fi - 2* math.pi
                 # v, fi = cmath.polar(complex(self.x, self.y))
                 # print (fi, v)
-                fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * math.pi/6
-                random_angle = math.pi * random.randint(-5, 5) /100
+                fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * math.pi / 6
+                random_angle = math.pi * random.randint(-5, 5) / 100
                 new_fi = -(fi + fi_delta + random_angle)
 
                 # new_fi = max(new_fi, math.pi * -3 / 4)
                 # new_fi = min(new_fi, math.pi * -1 / 4)
-                new_fi = max(new_fi, math.pi * -11/12)
-                new_fi = min(new_fi, math.pi * -1/12)
+                new_fi = max(new_fi, math.pi * -11 / 12)
+                new_fi = min(new_fi, math.pi * -1 / 12)
                 self.dir_y = v * math.sin(new_fi)
                 self.dir_x = v * math.cos(new_fi)
                 self.hit_paddle_sound.play()
+
+    def change_direction(self, angle):
+        v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.1
+        fi = self.get_polar(self.dir_x, self.dir_y)
+
+        new_fi = fi + angle
+        new_fi = max(new_fi, math.pi * -11 / 12)
+        new_fi = min(new_fi, math.pi * -1 / 12)
+        self.dir_y = v * math.sin(new_fi)
+        self.dir_x = v * math.cos(new_fi)
+
+    def random_direction(self):
+        v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.1
+        fi = self.get_polar(self.dir_x, self.dir_y)
+
+        new_fi = math.pi * random.randint(0, 200) / 100
+        new_fi = max(new_fi, math.pi * -11 / 12)
+        new_fi = min(new_fi, math.pi * -1 / 12)
+        self.dir_y = v * math.sin(new_fi)
+        self.dir_x = v * math.cos(new_fi)
 
     def calculate_line(self, paddle, line):
         line[0] = self.x + self.radius
@@ -112,7 +131,7 @@ class Ball:
         # new_fi = min(new_fi, math.pi * -1 / 4)
         new_fi = max(new_fi, math.pi * -11 / 12)
         new_fi = min(new_fi, math.pi * -1 / 12)
-        line[2]= line[0] + v * math.cos(new_fi) * 300
+        line[2] = line[0] + v * math.cos(new_fi) * 300
         line[3] = line[1] + v * math.sin(new_fi) * 300
 
     def check_for_lock(self, paddle):
@@ -149,8 +168,6 @@ class Ball:
             return True
         return False
 
-
-
     def get_polar(self, x, y):
         if x == 0 and y > 0:
             return math.pi / 2
@@ -162,3 +179,32 @@ class Ball:
             return math.atan(y / x) + 2 * math.pi
         if x < 0:
             return math.atan(y / x) + math.pi
+
+    def change_speed(self, speed_dif):
+        self.speed = self.speed + speed_dif
+
+    def copy(self):
+        temporary_ball = Ball(self.screen_width, self.screen_height)
+        temporary_ball.lock = self.lock
+        temporary_ball.position_on_paddle = self.position_on_paddle
+        temporary_ball.x_delta = self.x_delta
+        temporary_ball.y_delta = self.y_delta
+        temporary_ball.screen_width = self.screen_width
+        temporary_ball.screen_height = self.screen_height
+        temporary_ball.radius = self.radius
+        temporary_ball.speed = self.speed
+        temporary_ball.x = self.x
+        temporary_ball.y = self.y
+        temporary_ball.image = pygame.Surface((int(2 * self.radius), int(2 * self.radius)), pygame.SRCALPHA, 32)
+        img = pygame.image.load(Path("grafiks", "337-Breakout-Tiles.png"))
+        img = pygame.transform.scale(img, (self.radius * 2, self.radius * 2))
+        temporary_ball.image.blit(img, (0, 0))
+        temporary_ball.dir_x = self.dir_x
+        temporary_ball.dir_y = self.dir_y
+        temporary_ball.border_width = self.border_width
+        temporary_ball.border_width_top = self.border_width_top
+        temporary_ball.hit_brick_sound = self.hit_brick_sound
+        temporary_ball.hit_paddle_sound = self.hit_paddle_sound
+        temporary_ball.hit_bottom_sound = self.hit_bottom_sound
+        temporary_ball.sound_channel = self.sound_channel
+        return temporary_ball

@@ -4,9 +4,15 @@ import pygame
 
 import ctypes
 
+from adrianoid import paddle
 from adrianoid.background import Background
 from adrianoid.balls import Balls
+from adrianoid.bonus.ball_multiplication import BallMultiplication
+from adrianoid.bonus.ball_speed_up import BallSpeedUp
 from adrianoid.bonus.bonus import Bonus
+from adrianoid.bonus.paddle_extend import PaddleExtend
+from adrianoid.bonus.score50 import Score50
+from adrianoid.bonus.score500 import Score500
 from adrianoid.brick.brick import Brick
 from adrianoid.brick.green_brick import GreenBrick
 from adrianoid.fps_counter import FPSCounter
@@ -58,9 +64,10 @@ class Adrianoid:
         self.height = infoObject.current_h
         self.weight = 1920
         self.height = 1080
+        #self._display_surf = pygame.display.set_mode((self.weight, self.height),
+                                                     #pygame.SRCALPHA | pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.SCALED)
         self._display_surf = pygame.display.set_mode((self.weight, self.height),
-                                                     pygame.SRCALPHA | pygame.DOUBLEBUF | pygame.FULLSCREEN | pygame.SCALED)
-        # self._display_surf = pygame.display.set_mode((self.weight, self.height), pygame.SRCALPHA | pygame.DOUBLEBUF)
+                                                     pygame.SRCALPHA | pygame.DOUBLEBUF | pygame.SCALED)
 
         self.keys_pressed = pygame.key.get_pressed()
         self._running = True
@@ -90,11 +97,12 @@ class Adrianoid:
         for ball in self.balls.balls:
             for brick in self.bricks:
                 if ball.bounce_brick(brick):
-                    self.bonuses.append(Bonus(self.weight, self.height, brick.x, brick.y))
+                    self.bonuses.append(BallMultiplication(self.weight, self.height, brick.x, brick.y))
                     self.bricks.remove(brick)
                     self.score_counter.add_score(brick.points)
         for bonus in self.bonuses:
             if self.paddle.catch_bonus(bonus):
+                bonus.apply_bonus(self.balls,self.paddle,self.score_counter)
                 self.bonuses.remove(bonus)
 
     def on_render(self):

@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 import ctypes
@@ -6,8 +8,10 @@ from adrianoid.background import Background
 from adrianoid.balls import Balls
 from adrianoid.bonus.bonus import Bonus
 from adrianoid.brick.brick import Brick
+from adrianoid.brick.green_brick import GreenBrick
 from adrianoid.fps_counter import FPSCounter
 from adrianoid.paddle import Paddle
+from adrianoid.score_counter import ScoreCounter
 
 ctypes.windll.user32.SetProcessDPIAware()
 
@@ -35,10 +39,14 @@ class Adrianoid:
         self.bricks = []
         for x in range(-7, 8, 1):
             for y in range(8):
-                self.bricks.append(Brick(self.weight, self.height, -x, y))
+                if random.randint(0,1) == 0:
+                    self.bricks.append(Brick(self.weight, self.height, -x, y))
+                else:
+                    self.bricks.append(GreenBrick(self.weight,self.height,-x,y))
 
         self.bonuses = []
         self.coor = [0, 0, 0, 0]
+        self.score_counter = ScoreCounter()
 
     def on_init(self):
         pygame.mixer.pre_init()
@@ -84,6 +92,7 @@ class Adrianoid:
                 if ball.bounce_brick(brick):
                     self.bonuses.append(Bonus(self.weight, self.height, brick.x, brick.y))
                     self.bricks.remove(brick)
+                    self.score_counter.add_score(brick.points)
         for bonus in self.bonuses:
             if self.paddle.catch_bonus(bonus):
                 self.bonuses.remove(bonus)
@@ -101,6 +110,7 @@ class Adrianoid:
             self._display_surf.blit(bonus.image[bonus.image_counter], (bonus.x, bonus.y))
             bonus.update_image_counter(self.time)
         self.render_fps()
+        self.render_score()
         pygame.display.flip()
 
     def on_cleanup(self):
@@ -124,6 +134,8 @@ class Adrianoid:
         text_surface = self.my_font.render(str(self.fps.get_fps()), False, (255, 0, 0))
         self._display_surf.blit(text_surface, (0, 0))
 
+    def render_score(self):
+        self._display_surf.blit(self.score_counter.text_surface, (1700, 0))
 
 if __name__ == "__main__":
     app = Adrianoid()

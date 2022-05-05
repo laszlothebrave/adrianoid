@@ -15,4 +15,5 @@ class Brick:
         img = pygame.image.load(Path("grafiks", "001-Breakout-Tiles.png"))
         img = pygame.transform.scale(img, (self.width, self.height))
         self.image.blit(img, (0, 0))
+        self.points = 10
 

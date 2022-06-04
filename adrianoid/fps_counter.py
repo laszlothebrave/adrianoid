@@ -12,4 +12,4 @@ class FPSCounter:
         self.counter = (self.counter + 1) % self.length
 
     def get_fps(self):
-        return sum(self.measurements)//self.length
+        return int (sum(self.measurements)//self.length)

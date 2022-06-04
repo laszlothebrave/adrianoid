@@ -7,7 +7,8 @@ import pygame
 
 
 class Ball:
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height,volume):
+        self.volume=volume
         self.lock = None
         self.position_on_paddle = 0
         self.x_delta = None
@@ -25,7 +26,7 @@ class Ball:
         img = pygame.transform.scale(img, (self.radius * 2, self.radius * 2))
         self.image.blit(img, (0, 0))
         self.dir_x = 0
-        self.dir_y = 1
+        self.dir_y = -1
         self.border_width = 58
         self.border_width_top = 37
         self.hit_brick_sound = pygame.mixer.Sound(str(Path('sound', 'Arkanoid SFX (6).wav')))
@@ -44,9 +45,13 @@ class Ball:
         else:
             line = [0, 0, 0, 0]
             self.bounce_paddle_polar(paddle)
-            self.bounce_of_walls()
+            if self.bounce_of_walls():
+                return True
             self.x += self.x_delta
             self.y += self.y_delta
+        return False
+
+
 
     def bounce_of_walls(self):
         if self.border_width >= self.x:
@@ -57,11 +62,12 @@ class Ball:
             self.dir_y = abs(self.dir_y)
         if self.y >= self.screen_height - 2 * self.radius:
             self.dir_y = -abs(self.dir_y)
-            self.dir_y = 0.9 * self.dir_y
-            self.dir_x = 0.9 * self.dir_x
-            # self.dir_x = 0
-            # self.dir_y = 0
+            self.dir_x = 0
+            self.dir_y = 0
+            self.hit_bottom_sound.set_volume(self.volume.volume)
             self.hit_bottom_sound.play()
+            return True
+        return False
 
     def bounce_paddle(self, paddle):
         if self.y + 2 * self.radius <= paddle.y and self.y + 2 * self.radius + 3 * self.y_delta >= paddle.y:
@@ -72,12 +78,13 @@ class Ball:
                 r = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
                 self.dir_y = self.dir_y / r * v
                 self.dir_x = self.dir_x / r * v
+                self.hit_paddle_sound.set_volume(self.volume.volume)
                 self.hit_paddle_sound.play()
 
     def bounce_paddle_polar(self, paddle):
         if self.y + 2 * self.radius < paddle.y and self.y + 2 * self.radius + 2 * self.y_delta >= paddle.y:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
-                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.1
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.03
                 fi = self.get_polar(self.dir_x, self.dir_y)
                 # if fi > 2*math.pi:
                 #     fi = fi - 2* math.pi
@@ -93,6 +100,7 @@ class Ball:
                 new_fi = min(new_fi, math.pi * -1 / 12)
                 self.dir_y = v * math.sin(new_fi)
                 self.dir_x = v * math.cos(new_fi)
+                self.hit_paddle_sound.set_volume(self.volume.volume)
                 self.hit_paddle_sound.play()
 
     def change_direction(self, angle):
@@ -148,22 +156,26 @@ class Ball:
         if brick.x + brick.width > self.x + self.radius > brick.x and \
                 brick.y > self.y + self.radius > brick.y - self.radius:
             self.dir_y = -abs(self.dir_y)
+            self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
 
             return True
         if brick.x + brick.width > self.x + self.radius > brick.x and \
                 brick.y + brick.height < self.y + self.radius < brick.y + brick.height + self.radius:
             self.dir_y = abs(self.dir_y)
+            self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
             return True
         if brick.x > self.x + self.radius > brick.x - self.radius and \
                 brick.y + brick.height > self.y + self.radius > brick.y:
             self.dir_x = -abs(self.dir_x)
+            self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
             return True
         if brick.x + brick.width + self.radius > self.x + self.radius > brick.x + brick.width and \
                 brick.y + brick.height > self.y + self.radius > brick.y:
             self.dir_x = abs(self.dir_x)
+            self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
             return True
         return False
@@ -184,7 +196,8 @@ class Ball:
         self.speed = self.speed + speed_dif
 
     def copy(self):
-        temporary_ball = Ball(self.screen_width, self.screen_height)
+        temporary_ball = Ball(self.screen_width, self.screen_height,self.volume)
+        temporary_ball.volume=self.volume
         temporary_ball.lock = self.lock
         temporary_ball.position_on_paddle = self.position_on_paddle
         temporary_ball.x_delta = self.x_delta

@@ -16,7 +16,8 @@ MAGENTA = (255, 0, 255)
 # wymiary pola do gry to: prawy margines 58; lewy 358
 
 class Paddle:
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height,volume):
+        self.volume=volume
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.length = 15
@@ -45,6 +46,7 @@ class Paddle:
     def catch_bonus(self, bonus):
         if self.x + self.width > bonus.x > self.x - bonus.width and \
                 self.y - bonus.height < bonus.y < self.y + self.height:
+            self.catch_bonus_sound.set_volume(self.volume.volume)
             self.catch_bonus_sound.play()
             return True
         return False

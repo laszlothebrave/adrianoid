@@ -10,3 +10,7 @@ class ScoreCounter:
     def add_score(self,score_number):
         self.current_score = self.current_score+score_number
         self.text_surface = self.my_font.render(str(self.current_score), False, (255, 234, 0))
+
+    def reset_score(self):
+        self.current_score = 0
+        self.text_surface = self.my_font.render(str(self.current_score), False, (255, 234, 0))

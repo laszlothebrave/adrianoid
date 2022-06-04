@@ -16,4 +16,5 @@ class BallMultiplication(Bonus):
             x.random_direction()
             cloned_balls.append(x)
         balls.balls.extend(cloned_balls)
+        del balls.balls[8:]
 

@@ -16,11 +16,11 @@ class Ball:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.radius = 20
-        self.speed = 500
+        self.speed = 200
         self.x = (self.screen_width - 300) / 2 - self.radius
         self.y = self.screen_height / 3 * 2 - self.radius
-        # self.x = 900
-        # self.y=420
+        #self.x = 445
+        #self.y=120
         self.image = pygame.Surface((int(2 * self.radius), int(2 * self.radius)), pygame.SRCALPHA, 32)
         img = pygame.image.load(Path("grafiks", "337-Breakout-Tiles.png"))
         img = pygame.transform.scale(img, (self.radius * 2, self.radius * 2))
@@ -86,18 +86,15 @@ class Ball:
             if self.x + self.radius > paddle.x and self.x + self.radius < paddle.x + paddle.width:
                 v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2) * 1.03
                 fi = self.get_polar(self.dir_x, self.dir_y)
-                # if fi > 2*math.pi:
-                #     fi = fi - 2* math.pi
-                # v, fi = cmath.polar(complex(self.x, self.y))
-                # print (fi, v)
+
                 fi_delta = (paddle.x + paddle.width / 2 - (self.x + self.radius)) / (paddle.width / 2) * math.pi / 6
                 random_angle = math.pi * random.randint(-5, 5) / 100
+                random_angle = 0
                 new_fi = -(fi + fi_delta + random_angle)
 
-                # new_fi = max(new_fi, math.pi * -3 / 4)
-                # new_fi = min(new_fi, math.pi * -1 / 4)
                 new_fi = max(new_fi, math.pi * -11 / 12)
                 new_fi = min(new_fi, math.pi * -1 / 12)
+
                 self.dir_y = v * math.sin(new_fi)
                 self.dir_x = v * math.cos(new_fi)
                 self.hit_paddle_sound.set_volume(self.volume.volume)
@@ -153,31 +150,96 @@ class Ball:
             self.lock = False
 
     def bounce_brick(self, brick):
-        if brick.x + brick.width > self.x + self.radius > brick.x and \
-                brick.y > self.y + self.radius > brick.y - self.radius:
+        if self.not_even_close(brick):
+            return False
+        if brick.x + brick.width >= self.x + self.radius >= brick.x and \
+                brick.y >= self.y + self.radius >= brick.y - self.radius:
             self.dir_y = -abs(self.dir_y)
             self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
-
             return True
-        if brick.x + brick.width > self.x + self.radius > brick.x and \
-                brick.y + brick.height < self.y + self.radius < brick.y + brick.height + self.radius:
+
+        if brick.x + brick.width >= self.x + self.radius >= brick.x and \
+                brick.y + brick.height <= self.y + self.radius <= brick.y + brick.height + self.radius:
             self.dir_y = abs(self.dir_y)
             self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
             return True
-        if brick.x > self.x + self.radius > brick.x - self.radius and \
-                brick.y + brick.height > self.y + self.radius > brick.y:
+
+        if brick.x >= self.x + self.radius >= brick.x - self.radius and \
+                brick.y + brick.height >= self.y + self.radius >= brick.y:
             self.dir_x = -abs(self.dir_x)
             self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
             return True
-        if brick.x + brick.width + self.radius > self.x + self.radius > brick.x + brick.width and \
-                brick.y + brick.height > self.y + self.radius > brick.y:
+
+        if brick.x + brick.width + self.radius >= self.x + self.radius >= brick.x + brick.width and \
+                brick.y + brick.height >= self.y + self.radius >= brick.y:
             self.dir_x = abs(self.dir_x)
             self.hit_brick_sound.set_volume(self.volume.volume)
             self.hit_brick_sound.play()
             return True
+
+        if self.x + self.radius < brick.x and self.y + self.radius > brick.y + brick.height  and \
+                (brick.x - (self.x + self.radius))**2 + (brick.y + brick.height - (self.y +self.radius))**2 \
+                < self.radius**2:
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                fi = self.get_polar(self.dir_x, self.dir_y)
+
+                fi_delta = 1.25*math.pi
+                new_fi = fi -(fi - fi_delta)*2
+
+                self.dir_y = v * math.sin(new_fi)
+                self.dir_x = v * math.cos(new_fi)
+                self.hit_brick_sound.set_volume(self.volume.volume)
+                self.hit_brick_sound.play()
+                return True
+
+        if self.x + self.radius > brick.x + brick.width and self.y + self.radius > brick.y + brick.height  and \
+                (brick.x + brick.width - (self.x + self.radius))**2 + (brick.y + brick.height - (self.y +self.radius))**2 \
+                < self.radius**2 :
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                fi = self.get_polar(self.dir_x, self.dir_y)
+
+                fi_delta = 1.75*math.pi
+                new_fi = fi -(fi - fi_delta)*2
+
+                self.dir_y = v * math.sin(new_fi)
+                self.dir_x = v * math.cos(new_fi)
+                self.hit_brick_sound.set_volume(self.volume.volume)
+                self.hit_brick_sound.play()
+                return True
+
+        if self.x + self.radius > brick.x + brick.width and self.y + self.radius < brick.y  and \
+                (brick.x + brick.width - (self.x + self.radius))**2 + (brick.y  - (self.y +self.radius))**2 \
+                < self.radius**2 :
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                fi = self.get_polar(self.dir_x, self.dir_y)
+
+                fi_delta = 0.25*math.pi
+                new_fi = fi -(fi - fi_delta)*2
+
+                self.dir_y = v * math.sin(new_fi)
+                self.dir_x = v * math.cos(new_fi)
+                self.hit_brick_sound.set_volume(self.volume.volume)
+                self.hit_brick_sound.play()
+                return True
+
+        if self.x + self.radius < brick.x and self.y + self.radius < brick.y  and \
+                (brick.x - (self.x + self.radius))**2 + (brick.y - (self.y +self.radius))**2 \
+                < self.radius**2 :
+                v = math.sqrt(self.dir_y ** 2 + self.dir_x ** 2)
+                fi = self.get_polar(self.dir_x, self.dir_y)
+
+                fi_delta = 0.75*math.pi
+                new_fi = fi -(fi - fi_delta)*2
+
+                self.dir_y = v * math.sin(new_fi)
+                self.dir_x = v * math.cos(new_fi)
+                self.hit_brick_sound.set_volume(self.volume.volume)
+                self.hit_brick_sound.play()
+                return True
+
         return False
 
     def get_polar(self, x, y):
@@ -193,7 +255,8 @@ class Ball:
             return math.atan(y / x) + math.pi
 
     def change_speed(self, speed_dif):
-        self.speed = self.speed + speed_dif
+        self.speed = min(self.speed + speed_dif, 800)
+        self.speed = max(self.speed + speed_dif, 250)
 
     def copy(self):
         temporary_ball = Ball(self.screen_width, self.screen_height,self.volume)
@@ -221,3 +284,11 @@ class Ball:
         temporary_ball.hit_bottom_sound = self.hit_bottom_sound
         temporary_ball.sound_channel = self.sound_channel
         return temporary_ball
+
+    def not_even_close(self, brick):
+        if brick.x - self.radius < self.x + self.radius < brick.x + brick.width + self.radius and \
+            brick.y -self.radius < self.y + self.radius < brick.y + brick.height + self.radius:
+            return False
+        return True
+
+

@@ -22,7 +22,7 @@ class Paddle:
         self.screen_height = screen_height
         self.length = 15
         self.base_speed = 10
-        self.speed_multiplayer = 100
+        self.speed_multiplayer = 75
         self.height = 2 * self.screen_height / 100
         self.width = self.length * self.screen_width / 100
         self.x = 50 / 100 * (self.screen_width - 300) - self.width / 2
@@ -52,7 +52,8 @@ class Paddle:
         return False
 
     def change_width(self, length_dif):
-        self.length = self.length + length_dif
+        self.length = max(self.length + length_dif,10)
+        self.length = min(self.length + length_dif,40)
         self.width = self.length * self.screen_width / 100
         self.image = pygame.Surface((int(self.width), int(self.height)), pygame.SRCALPHA, 32)
         img = pygame.image.load(Path("grafiks", "317-Breakout-Tiles.png"))

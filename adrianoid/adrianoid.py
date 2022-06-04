@@ -177,7 +177,7 @@ class Adrianoid:
     def generate_random_bonus(self, weight, height, x, y):
         bonus_list = [BallMultiplication, BallSpeedUp, BallSpeedDown, PaddleExtend, PaddleShrink, Score50, Score500,
                       Score100, Score250,None]
-        random_bonus = random.choices(bonus_list,weights=[1,1,1,1,1,1,1,1,1,10],k=1)[0]
+        random_bonus = random.choices(bonus_list,weights=[1,3,3,3,3,4,1,3,2,20],k=1)[0]
         if random_bonus is None:
             return None
         return random_bonus(weight,height,x,y)
@@ -193,7 +193,7 @@ class Adrianoid:
 
     def reset_game(self):
         brick_x = 4
-        brick_y = 5
+        brick_y = 10
         for x in range(-brick_x + 1, brick_x, 1):
             for y in range(brick_y):
                 if random.randint(0, 1) == 0:

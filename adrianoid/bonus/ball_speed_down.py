@@ -9,4 +9,4 @@ class BallSpeedDown(Bonus):
 
     def apply_bonus(self, balls, paddle,score_counter):
         for ball in balls.balls:
-            ball.change_speed(-200)
+            ball.change_speed(-100)

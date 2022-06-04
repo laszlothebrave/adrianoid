@@ -8,4 +8,4 @@ class PaddleExtend(Bonus):
         self.load_animation(294)
 
     def apply_bonus(self,balls,paddle,score_counter):
-        paddle.change_width(4)
+        paddle.change_width(2)
